@@ -73,7 +73,6 @@ while true; do
 
     echo "Порог превышен на ${diff_percent}% — нужно освободить ~${needed_bytes} байт."
 
-    # ─── Сбор списка файлов, отсортированных по дате (старые первые) ──
     mapfile -d '' -t entries < <(find "$LOG_DIR" -maxdepth 1 -type f -printf '%T@ %p\0' | sort -z -n)
 
     if [ ${#entries[@]} -eq 0 ]; then
