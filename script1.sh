@@ -3,8 +3,6 @@ set -euo pipefail
 
 #Значения по умолчанию
 THRESHOLD=70
-LOG_DIR="$1"
-BACKUP_DIR="${BACKUP_DIR:-$(dirname "$LOG_DIR")/backup}"
 
 #Аргументы
 if [ $# -lt 1 ]; then
@@ -18,6 +16,7 @@ if [ $# -lt 1 ]; then
 fi
 
 LOG_DIR="$1"
+BACKUP_DIR="${BACKUP_DIR:-$(dirname "$LOG_DIR")/backup}"
 
 if [ $# -ge 2 ]; then
     THRESHOLD="$2"
