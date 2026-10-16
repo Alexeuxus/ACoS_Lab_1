@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -u
+
 base_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 log_dir="$base_dir/log"
 backup_dir="$base_dir/backup"
@@ -118,8 +120,12 @@ create_log "1.log" "$(perc_to_mb 30)" 5
 create_log "2.log" "$(perc_to_mb 29)" 1
 
 "$script1" "$log_dir" 70
+status_test1=$?
 
-if [ -f "$log_dir/1.log" ] && [ -z "$(ls -A "$backup_dir")" ]; then
+if (( status_test1 != 0 )); then
+	echo "script1.sh упал с кодом $status_test1"
+	print_result "Тест 1" 0
+elif [ -f "$log_dir/1.log" ] && [ -z "$(ls -A "$backup_dir")" ]; then
 	print_result "Тест 1" 1
 else
 	print_result "Тест 1" 0
@@ -138,8 +144,12 @@ create_log "2.log" "$(perc_to_mb 20)" 1
 create_log "3.log" "$(perc_to_mb 40)" 1
 
 "$script1" "$log_dir" 50
+status_test2=$?
 
-if [ ! -f "$log_dir/1.log" ] && [ -f "$log_dir/3.log" ] && [ -n "$(ls -A "$backup_dir")" ]; then
+if (( status_test2 != 0 )); then
+	echo "script1.sh упал с кодом $status_test2"
+	print_result "Тест 2" 0
+elif [ ! -f "$log_dir/1.log" ] && [ -f "$log_dir/3.log" ] && [ -n "$(ls -A "$backup_dir")" ]; then
 	print_result "Тест 2" 1
 else
 	print_result "Тест 2" 0
@@ -157,8 +167,12 @@ create_log "2.log" "$(perc_to_mb 29)" 3
 create_log "3.log" "$(perc_to_mb 29)" 2
 
 "$script1" "$log_dir" 10
+status_test3=$?
 
-if [ -z "$(find "$log_dir" -maxdepth 1 -type f -print -quit)" ] && [ -n "$(ls -A "$backup_dir")" ]; then
+if (( status_test3 != 0 )); then
+	echo "script1.sh упал с кодом $status_test3"
+	print_result "Тест 3" 0
+elif [ -z "$(find "$log_dir" -maxdepth 1 -type f -print -quit)" ] && [ -n "$(ls -A "$backup_dir")" ]; then
         print_result "Тест 3" 1
 else
         print_result "Тест 3" 0
@@ -201,10 +215,14 @@ create_log "2.log" "$(perc_to_mb 26)" 1
 export LAB1_MAX_COMPRESSION=1
 
 "$script1" "$log_dir" 50
+status_test5=$?
 
 lzma=$(find "$backup_dir" -type f \( -name "*.lzma" -o -name "*.xz" \) 2>/dev/null)
 
-if [ -n "$lzma" ]; then
+if (( status_test5 != 0)); then
+	echo "script1.sh упал с кодом $status_test5"
+	print_result "Тест 5" 0
+elif [ -n "$lzma" ]; then
         print_result "Тест 5" 1
 else
         print_result "Тест 5" 0
